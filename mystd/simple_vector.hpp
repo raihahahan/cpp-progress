@@ -51,12 +51,12 @@ public:
     const ElemTy* cend() const { return m_buffer + m_size; }
 
     #pragma region Reverse Iterator
-    lecture05::iterators::RevIter<ElemTy*> rbegin() { return {end()}; }
-    lecture05::iterators::RevIter<ElemTy*> rend() { return {begin()}; }
-    lecture05::iterators::RevIter<const ElemTy*> rbegin() const { return {end()}; }
-    lecture05::iterators::RevIter<const ElemTy*> rend() const { return {begin()}; }
-    lecture05::iterators::RevIter<const ElemTy*> crbegin() const { return {end()}; }
-    lecture05::iterators::RevIter<const ElemTy*> crend() const { return {begin()}; }
+    mystd::iterators::RevIter<ElemTy*> rbegin() { return {end()}; }
+    mystd::iterators::RevIter<ElemTy*> rend() { return {begin()}; }
+    mystd::iterators::RevIter<const ElemTy*> rbegin() const { return {end()}; }
+    mystd::iterators::RevIter<const ElemTy*> rend() const { return {begin()}; }
+    mystd::iterators::RevIter<const ElemTy*> crbegin() const { return {end()}; }
+    mystd::iterators::RevIter<const ElemTy*> crend() const { return {begin()}; }
 
     #pragma region Methods
     void swap(SimpleVector& other) {
@@ -92,7 +92,7 @@ public:
         return nullptr;
     }
 
-    lecture05::iterators::BackIns<SimpleVector> back_inserter() {
+    mystd::iterators::BackIns<SimpleVector> back_inserter() {
         return {this};
     }
 

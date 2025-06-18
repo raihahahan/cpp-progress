@@ -7,7 +7,7 @@
 #pragma once
 
 
-namespace lecture05::iterators {
+namespace mystd::iterators {
     template <typename T>
     struct InputIterator {
         using value_type = T;
