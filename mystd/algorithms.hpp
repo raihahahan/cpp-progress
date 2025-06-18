@@ -1,7 +1,7 @@
 #include <functional>
 #pragma once
 
-namespace mystd::algorithms {
+namespace mystd {
     template <typename InputIt, typename T>
     InputIt find(InputIt begin, InputIt end, const T& value) {
         for (; begin != end) {

@@ -3,7 +3,7 @@
 #include <numeric> // std::iota
 
 int main() {
-    SimpleVector<int> vec = {1, 2, 3, 4, 5};
+    mystd::SimpleVector<int> vec = {1, 2, 3, 4, 5};
     std::cout << "Original vector: " << vec << "\n";
 
     std::cout << "Reverse iteration: ";
