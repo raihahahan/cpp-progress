@@ -37,11 +37,33 @@ namespace mystd {
             return *this;
         }
 
-        
+        // move constructor
+        SimpleVector(SimpleVector&& other) noexcept : m_buffer{other.m_buffer}, m_size{other.m_size} {
+            other.m_buffer = nullptr;
+            other.m_size = 0;
+        }
+
+        // move-assignment
+        SimpleVector& operator=(SimpleVector&& other) {
+            auto moved = SimpleVector{std::move(other)};
+            this->swap(moved);
+            return *this;
+        }
+
         // destructor
         ~SimpleVector() {
             delete[] m_buffer;
         }
+
+        // alternative: rule of 4.5 by 
+        // having by-value assignment operator instead of
+        // both move and copy assignment
+        /*
+        SimpleVector& operator=(SimpleVector other) {
+            this->swap(other);
+            return *this;
+        }
+        */
         
         // accessors
         size_t size() const { return m_size; }
@@ -73,13 +95,17 @@ namespace mystd {
             a.swap(b);
         }
 
-        void push_back(const ElemTy& val) {
-            ElemTy* new_buffer = new ElemTy[m_size + 1];
-            std::copy(m_buffer, m_buffer + m_size, new_buffer);
-            new_buffer[m_size] = val;
+        void push_back(ElemTy val) {
+            // param is passed by value
+            // to support both lvalues and rvalues efficiently
+            // 1. lvalue: copy into parameter then move to buffer
+            // 2. rvalue: move into parameter, then move again
+            // 3. prvalue: constructed in-place, then moved into buffer
+            auto new_buffer = make_new_buffer(m_size + 1);
+            new_buffer[m_size] = std::move(val);
             delete[] m_buffer;
             m_buffer = new_buffer;
-            m_size++;
+            ++m_size;
         }
 
         void push_front(const ElemTy& val) {
@@ -88,8 +114,16 @@ namespace mystd {
         }
 
         ElemTy pop_back() {
-            // TODO
-            return nullptr;
+            assert(m_size > 0);
+            auto new_buffer = make_new_buffer(m_size - 1);
+
+            ElemTy last_elem = std::move(m_buffer[m_size - 1]);
+            --m_size;
+
+            delete[] m_buffer;
+            m_buffer = new_buffer;
+
+            return last_elem;
         }
 
         ElemTy pop_front() {
@@ -125,6 +159,17 @@ namespace mystd {
             os << "]";
             return os;
         }
+    
+    private:
+        ElemTy* make_new_buffer(size_t new_size) {
+            ElemTy* new_buffer = new ElemTy[new_size];
+            for (size_t i = 0; i < std::min(new_size, m_size); ++i) {
+                new_buffer[i] = std::move(m_buffer[i]);
+            }
+
+            return new_buffer;
+        }
     };
+
 
 }
