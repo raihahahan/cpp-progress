@@ -4,6 +4,7 @@
 #include <concepts>      // C++20 concepts
 #include <iostream>      // std::ostream
 #include "iterators.hpp"
+#pragma once
 
 namespace mystd {
     template <typename ElemTy>
@@ -13,37 +14,41 @@ namespace mystd {
         size_t m_size;
 
     public:
-        #pragma region Constructors
+        // constructors
         SimpleVector() : m_buffer{nullptr}, m_size{0} {}
 
+         SimpleVector(std::initializer_list<ElemTy> init) : m_size{init.size()} {
+            m_buffer = new ElemTy[m_size];
+            std::copy(init.begin(), init.end(), m_buffer);
+        }
+
+        // copy constructor
         SimpleVector(const SimpleVector& other) : m_size{other.m_size} {
             m_buffer = new ElemTy[m_size];
             for (size_t i = 0; i < m_size; ++i) {
                 m_buffer = other.m_buffer[i];
             }
         }
-
+        
+        // copy-assignment
         SimpleVector& operator=(const SimpleVector& other) {
             SimpleVector copy{other};
             this->swap(copy);
             return *this;
         }
 
-        SimpleVector(std::initializer_list<ElemTy> init) : m_size{init.size()} {
-            m_buffer = new ElemTy[m_size];
-            std::copy(init.begin(), init.end(), m_buffer);
-        }
-
+        
+        // destructor
         ~SimpleVector() {
             delete[] m_buffer;
         }
         
-        #pragma region Accessors
+        // accessors
         size_t size() const { return m_size; }
         ElemTy& operator[](size_t i) { return m_buffer[i]; }
         const ElemTy& operator[](size_t i) const { return m_buffer[i]; }
 
-        #pragma region Normal Iterator
+        // iterators
         ElemTy* begin() { return m_buffer; }
         ElemTy* end() { return m_buffer + m_size; }
         const ElemTy* begin() const { return m_buffer; }
@@ -51,7 +56,6 @@ namespace mystd {
         const ElemTy* cbegin() const { return m_buffer; }
         const ElemTy* cend() const { return m_buffer + m_size; }
 
-        #pragma region Reverse Iterator
         mystd::RevIter<ElemTy*> rbegin() { return {end()}; }
         mystd::RevIter<ElemTy*> rend() { return {begin()}; }
         mystd::RevIter<const ElemTy*> rbegin() const { return {end()}; }
@@ -59,7 +63,7 @@ namespace mystd {
         mystd::RevIter<const ElemTy*> crbegin() const { return {end()}; }
         mystd::RevIter<const ElemTy*> crend() const { return {begin()}; }
 
-        #pragma region Methods
+        // methods
         void swap(SimpleVector& other) {
             std::swap(m_buffer, other.m_buffer);
             std::swap(m_size, other.m_size);
@@ -111,7 +115,7 @@ namespace mystd {
             m_size += num_elems;
         }
 
-        #pragma region Operators
+        // non-member methods
         friend std::ostream& operator<<(std::ostream& os, const SimpleVector& v) {
             os << "[";
             for (size_t i = 0; i < v.size(); ++i) {
